@@ -48,6 +48,7 @@
 
 html {
   height: 100%;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -86,7 +87,19 @@ button {
 .shell {
   max-width: 44rem;
   margin: 0 auto;
-  padding: 2rem 1.25rem 4rem;
+  /* Safe-area insets keep content off the notch/home bar when installed. */
+  padding: 2rem max(1.25rem, env(safe-area-inset-right)) calc(4rem + env(safe-area-inset-bottom))
+    max(1.25rem, env(safe-area-inset-left));
+}
+
+@media (max-width: 30rem) {
+  .shell {
+    padding-top: 1.25rem;
+  }
+
+  .shell-header {
+    margin-bottom: 1.25rem;
+  }
 }
 
 .shell-header {
@@ -104,12 +117,21 @@ button {
   letter-spacing: 0.02em;
 }
 
-/* Consistent tab navigation (WCAG 3.2.3: same order on every view). */
+/* Consistent tab navigation (WCAG 3.2.3: same order on every view).
+   On narrow screens the row scrolls sideways instead of wrapping or
+   truncating. */
 .tabs {
   display: flex;
   gap: 0.25rem;
   border-bottom: 1px solid var(--color-border);
   margin-bottom: 2rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
 }
 
 .tab {
@@ -119,6 +141,8 @@ button {
   color: var(--color-text-soft);
   border-bottom: 2px solid transparent;
   transition: color var(--motion);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .tab[aria-selected='true'] {
@@ -146,7 +170,8 @@ button {
 
 .timer-clock {
   font-family: var(--font-body);
-  font-size: 4.5rem;
+  /* Fluid: comfortable on a 320px phone, stately on a desktop. */
+  font-size: clamp(3.25rem, 16vw, 4.5rem);
   font-variant-numeric: tabular-nums;
   line-height: 1.1;
   margin-bottom: 0.5rem;
@@ -652,6 +677,12 @@ input[type='range'] {
   font-size: 0.9rem;
 }
 
+@media (max-width: 30rem) {
+  .field-grid {
+    gap: 0.25rem;
+  }
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -678,6 +709,7 @@ input[type='range'] {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  flex-wrap: wrap;
   padding: 1rem 1.25rem;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -697,4 +729,43 @@ input[type='range'] {
   border-radius: 6px;
   background: var(--color-bg);
   color: inherit;
+}
+
+/* --------------------------------------------------------------------------
+   Touch ergonomics: comfortable targets on coarse pointers (WCAG 2.5.8)
+-------------------------------------------------------------------------- */
+
+input[type='checkbox'] {
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--color-accent);
+  flex-shrink: 0;
+}
+
+@media (pointer: coarse) {
+  .btn,
+  .chip,
+  .habit-log,
+  .mode-switch button {
+    min-height: 44px;
+  }
+
+  .tab {
+    min-height: 44px;
+    padding-top: 0.65rem;
+  }
+
+  .icon-btn {
+    min-width: 2.25rem;
+    min-height: 2.25rem;
+  }
+
+  input[type='range'] {
+    min-height: 2rem;
+  }
+
+  input[type='checkbox'] {
+    width: 1.35rem;
+    height: 1.35rem;
+  }
 }
