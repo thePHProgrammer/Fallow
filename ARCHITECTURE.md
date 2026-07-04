@@ -66,26 +66,36 @@ a gentle nudge after 90 continuous minutes of focus. Breathing widget (4s in /
 assets), stretch prompts, silent mindful pause. No doom-scroll option, by
 construction. Small, because it's tightly coupled to the timer.
 
-### Phase 3 — Prioritization board
+### Phase 3 — Prioritization board ✅
 Eisenhower Kanban with dnd-kit: four quadrants, hard cap of 10 tasks per
 quadrant, separate work/personal boards, and an implementation-intention
 prompt on task creation ("If X happens, then I will Y").
 
-### Phase 4 — Habit engine (optional, gentle)
+### Phase 4 — Habit engine (optional, gentle) ✅
 Max three habits, each tied to a trigger; sub-30-second logging;
 "never miss twice"; streak freezes and a grace window; streak math in the
 local timezone; encouraging language on a broken streak, never a punitive
 reset. **If it starts feeling like pressure, drop it.**
 
-### Phase 5 — Reflective journal (private by design, build last)
+### Phase 5 — Reflective journal (private by design) ✅
 Two prompts (feelings, thoughts) to steer away from rumination.
 Distraction-free editor, spellcheck/grammar off, autosave, optional gratitude
 prompt. Local-only or client-side encrypted. Plain-text export. Zero content
 analytics.
 
-### Phase 6 — Polish
-Installable offline PWA, JSON export/import (no data lock-in), and only then
-optional Supabase sync + auth.
+### Phase 6 — Polish ✅ (sync deferred)
+Installable offline PWA (manifest + service worker with cached fallback) and
+JSON export/import of every store, so data is never locked in. Optional
+Supabase sync + auth remains deliberately unbuilt until single-device use
+proves limiting.
+
+### The field — gentle gamification
+Gamification made it in, but growth-only by design: completed focus blocks
+grow plants in a 14-day field. There is no decay, no loss state, no points,
+no red numbers — a bare plot is soil resting, which is what "fallow" means.
+Loss-framed mechanics (dying streaks, wilting plants) convert a focus tool
+into an anxiety source, so they are banned here the same way the doom-scroll
+break option is.
 
 ## Data model
 
@@ -110,11 +120,22 @@ src/
   store/
     settings.ts         calmMode, timerConfig, soundMix (persisted)
     timer.ts            phase machine, timestamps, session log (persisted)
+    tasks.ts            Eisenhower tasks, 10-per-quadrant cap (persisted)
+    habits.ts           max-3 habits, freezes, local-tz streaks (persisted)
+    journal.ts          entries + autosaved draft (persisted, local-only)
   audio/
     noise.ts            procedural white/pink/brown engine + chime
   components/
     TimerPanel.tsx      hybrid timer UI + 90-minute nudge
     BreakPanel.tsx      restorative break activities (Phase 2)
+    BoardPanel.tsx      Eisenhower board, dnd-kit drag between quadrants
+    HabitsPanel.tsx     gentle habit cards, one-tap logging
+    JournalPanel.tsx    two-prompt editor, plain-text export
+    FieldPanel.tsx      growth-only field of completed blocks
     NoiseMixer.tsx      per-colour gain sliders
-    SettingsPanel.tsx   Calm Mode + durations
+    SettingsPanel.tsx   Calm Mode + durations + JSON export/import
+public/
+  manifest.webmanifest  PWA install metadata
+  sw.js                 offline cache (network-first navigations)
+  icon.svg              app icon
 ```

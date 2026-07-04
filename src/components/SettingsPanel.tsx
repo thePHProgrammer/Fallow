@@ -1,4 +1,15 @@
+import { useRef } from 'react'
 import { useSettings, type TimerConfig } from '../store/settings'
+
+// Every persisted store. Export/import moves all of them at once, so data
+// is never locked into one browser.
+const STORE_KEYS = [
+  'fallow-settings',
+  'fallow-timer',
+  'fallow-tasks',
+  'fallow-habits',
+  'fallow-journal',
+]
 
 const DURATIONS: { key: keyof TimerConfig; label: string; hint: string }[] = [
   { key: 'focusMinutes', label: 'Focus block', hint: 'Minutes per Pomodoro block' },
@@ -9,6 +20,34 @@ const DURATIONS: { key: keyof TimerConfig; label: string; hint: string }[] = [
 
 export function SettingsPanel() {
   const { calmMode, timerConfig, setCalmMode, setTimerConfig } = useSettings()
+  const fileRef = useRef<HTMLInputElement>(null)
+
+  const exportData = () => {
+    const data = Object.fromEntries(
+      STORE_KEYS.map((k) => [k, JSON.parse(localStorage.getItem(k) ?? 'null')]),
+    )
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(
+      new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }),
+    )
+    a.download = `fallow-${new Date().toISOString().slice(0, 10)}.json`
+    a.click()
+    URL.revokeObjectURL(a.href)
+  }
+
+  const importData = async (file: File) => {
+    try {
+      const data = JSON.parse(await file.text()) as Record<string, unknown>
+      const known = STORE_KEYS.filter((k) => data[k] != null)
+      if (known.length === 0) throw new Error('no Fallow data found')
+      if (!window.confirm(`Replace current data with this export (${known.length} stores)?`))
+        return
+      for (const k of known) localStorage.setItem(k, JSON.stringify(data[k]))
+      location.reload()
+    } catch {
+      window.alert('That file does not look like a Fallow export.')
+    }
+  }
 
   return (
     <section className="settings" aria-label="Settings">
@@ -44,6 +83,35 @@ export function SettingsPanel() {
           />
         </div>
       ))}
+
+      <div className="setting-row">
+        <div>
+          <p>Your data</p>
+          <p className="hint">
+            Everything lives in this browser. Export a JSON snapshot any time;
+            import replaces what's here.
+          </p>
+        </div>
+        <div className="form-row">
+          <button className="btn" onClick={exportData}>
+            Export
+          </button>
+          <button className="btn" onClick={() => fileRef.current?.click()}>
+            Import
+          </button>
+          <input
+            ref={fileRef}
+            type="file"
+            accept="application/json"
+            hidden
+            onChange={(e) => {
+              const f = e.target.files?.[0]
+              if (f) void importData(f)
+              e.target.value = ''
+            }}
+          />
+        </div>
+      </div>
     </section>
   )
 }

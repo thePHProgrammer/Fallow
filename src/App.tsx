@@ -1,11 +1,19 @@
 import { useEffect, useState } from 'react'
 import { useSettings } from './store/settings'
 import { TimerPanel } from './components/TimerPanel'
+import { BoardPanel } from './components/BoardPanel'
+import { HabitsPanel } from './components/HabitsPanel'
+import { JournalPanel } from './components/JournalPanel'
+import { FieldPanel } from './components/FieldPanel'
 import { SettingsPanel } from './components/SettingsPanel'
 
-// Phase 3+ will add 'board'; keeping navigation order stable (WCAG 3.2.3).
+// Keep this order stable everywhere (WCAG 3.2.3).
 const TABS = [
   { id: 'focus', label: 'Focus' },
+  { id: 'board', label: 'Board' },
+  { id: 'habits', label: 'Habits' },
+  { id: 'journal', label: 'Journal' },
+  { id: 'field', label: 'Field' },
   { id: 'settings', label: 'Settings' },
 ] as const
 
@@ -41,6 +49,10 @@ export default function App() {
 
       <main>
         {tab === 'focus' && <TimerPanel />}
+        {tab === 'board' && <BoardPanel />}
+        {tab === 'habits' && <HabitsPanel />}
+        {tab === 'journal' && <JournalPanel />}
+        {tab === 'field' && <FieldPanel />}
         {tab === 'settings' && <SettingsPanel />}
       </main>
     </div>

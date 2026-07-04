@@ -1,7 +1,8 @@
 # Fallow
 
-A calm, local-first focus app. A hybrid Pomodoro/Flowtime timer and a
-procedural noise mixer — nothing else until this part proves itself useful.
+A calm, local-first focus app: a hybrid Pomodoro/Flowtime timer, procedural
+noise, restorative breaks, an Eisenhower board, gentle habits, a private
+journal, and a field that grows as you focus.
 
 Land left fallow recovers. So does attention.
 
@@ -11,6 +12,9 @@ Land left fallow recovers. So does attention.
   is deliberately abandoned.
 - **Procedural sound.** White, pink, and brown noise generated with the
   Web Audio API — no audio files, works offline.
+- **Growth-only gamification.** Completed blocks grow plants in the field;
+  nothing decays, nothing is lost, rest is part of the cycle.
+- **Installable PWA.** Works offline; export/import your data as JSON.
 - **Calm by default.** Charcoal on off-white, generous line-height, visible
   focus rings, `prefers-reduced-motion` respected, and a Calm Mode toggle
   that mutes colour and motion entirely.
