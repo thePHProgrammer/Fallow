@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react'
 import { useTimer } from '../store/timer'
 import { noiseEngine } from '../audio/noise'
 import { NoiseMixer } from './NoiseMixer'
+import { BreakPanel } from './BreakPanel'
+
+const LONG_FOCUS_NUDGE_MS = 90 * 60_000
 
 function format(ms: number): string {
   const total = Math.max(0, Math.round(ms / 1000))
@@ -98,6 +101,15 @@ export function TimerPanel() {
             </div>
           </>
         )}
+
+        {timer.phase === 'focus' && elapsed >= LONG_FOCUS_NUDGE_MS && (
+          <p className="nudge">
+            Ninety minutes of continuous focus. Quality drops from here —
+            consider closing this block and taking a real break.
+          </p>
+        )}
+
+        {timer.phase === 'break' && <BreakPanel />}
 
         {timer.phase === 'focus' && (
           <div className="timer-actions">

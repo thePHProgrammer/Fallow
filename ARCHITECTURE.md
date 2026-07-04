@@ -59,10 +59,12 @@ Retrofitting this later is expensive; doing it first is nearly free.
   filter, brown via leaky integration — each looped with its own gain node and
   a low default level.
 
-### Phase 2 — Restorative breaks
-Triggered on timer completion or after 90 continuous minutes. Breathing widget
-(4s in / 6s out, reduced-motion aware), 40-second green visualization, stretch
-prompt, silent mindful pause. Small, because it's tightly coupled to the timer.
+### Phase 2 — Restorative breaks ✅
+Triggered on timer completion (the break phase shows an activity picker) plus
+a gentle nudge after 90 continuous minutes of focus. Breathing widget (4s in /
+6s out, reduced-motion aware), 40-second green visualization (inline SVG, no
+assets), stretch prompts, silent mindful pause. No doom-scroll option, by
+construction. Small, because it's tightly coupled to the timer.
 
 ### Phase 3 — Prioritization board
 Eisenhower Kanban with dnd-kit: four quadrants, hard cap of 10 tasks per
@@ -111,7 +113,8 @@ src/
   audio/
     noise.ts            procedural white/pink/brown engine + chime
   components/
-    TimerPanel.tsx      hybrid timer UI
+    TimerPanel.tsx      hybrid timer UI + 90-minute nudge
+    BreakPanel.tsx      restorative break activities (Phase 2)
     NoiseMixer.tsx      per-colour gain sliders
     SettingsPanel.tsx   Calm Mode + durations
 ```

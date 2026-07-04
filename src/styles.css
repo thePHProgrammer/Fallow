@@ -213,6 +213,102 @@ button {
   background: none;
 }
 
+.nudge {
+  color: var(--color-text-soft);
+  font-size: 0.9rem;
+  margin: 0 auto 1.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   Restorative breaks (Phase 2)
+-------------------------------------------------------------------------- */
+
+.break-panel {
+  margin-bottom: 2rem;
+}
+
+.break-choices {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.chip {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-soft);
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+  transition: background var(--motion), color var(--motion);
+}
+
+.chip[aria-pressed='true'] {
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+  color: var(--color-text);
+}
+
+.break-cue {
+  color: var(--color-text-soft);
+  margin: 0 auto;
+}
+
+.breath {
+  display: grid;
+  place-items: center;
+  gap: 1.25rem;
+  padding: 1rem 0;
+}
+
+/* Functional motion: the breathing pace IS the content, so it keeps its
+   explicit durations rather than the global --motion token. Reduced motion
+   stills the circle and lets the text cues carry the rhythm. */
+.breath-circle {
+  width: 7rem;
+  height: 7rem;
+  border-radius: 50%;
+  background: var(--color-accent-soft);
+  border: 2px solid var(--color-accent);
+}
+
+.breath-in {
+  transform: scale(1.2);
+  transition: transform 4s ease-in-out;
+}
+
+.breath-out {
+  transform: scale(0.75);
+  transition: transform 6s ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .breath-circle {
+    transition: none;
+    transform: none;
+  }
+}
+
+.green-view {
+  display: grid;
+  gap: 1rem;
+}
+
+.green-view svg {
+  width: 100%;
+  max-width: 26rem;
+  margin: 0 auto;
+  border-radius: var(--radius);
+  display: block;
+}
+
+.stretch {
+  display: grid;
+  gap: 1.25rem;
+  justify-items: center;
+}
+
 /* --------------------------------------------------------------------------
    Noise mixer
 -------------------------------------------------------------------------- */
