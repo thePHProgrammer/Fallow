@@ -10,7 +10,8 @@ Land left fallow recovers. So does attention.
   to your browser's localStorage.
 - **Indivisible focus blocks.** No pause button; a block either completes or
   is deliberately abandoned.
-- **Procedural sound.** White, pink, and brown noise generated with the
+- **Procedural sound.** White, pink, and brown noise plus rain and ocean
+  waves, all generated with the
   Web Audio API — no audio files, works offline.
 - **Growth-only gamification.** Completed blocks grow plants in the field;
   nothing decays, nothing is lost, rest is part of the cycle.

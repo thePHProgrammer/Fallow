@@ -1,7 +1,15 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-export type NoiseKind = 'white' | 'pink' | 'brown'
+export type NoiseKind = 'white' | 'pink' | 'brown' | 'rain' | 'waves'
+
+const DEFAULT_MIX: Record<NoiseKind, number> = {
+  white: 0,
+  pink: 0.15,
+  brown: 0,
+  rain: 0,
+  waves: 0,
+}
 
 export interface TimerConfig {
   focusMinutes: number
@@ -30,13 +38,22 @@ export const useSettings = create<SettingsState>()(
         longBreakMinutes: 15,
         blocksPerLongBreak: 4,
       },
-      soundMix: { white: 0, pink: 0.15, brown: 0 },
+      soundMix: DEFAULT_MIX,
       setCalmMode: (on) => set({ calmMode: on }),
       setTimerConfig: (patch) =>
         set((s) => ({ timerConfig: { ...s.timerConfig, ...patch } })),
       setNoiseLevel: (kind, level) =>
         set((s) => ({ soundMix: { ...s.soundMix, [kind]: level } })),
     }),
-    { name: 'fallow-settings' },
+    {
+      name: 'fallow-settings',
+      version: 1,
+      // v0 → v1: soundMix gained rain and waves; keep the user's levels and
+      // default the new channels to silent.
+      migrate: (persisted) => {
+        const s = persisted as SettingsState
+        return { ...s, soundMix: { ...DEFAULT_MIX, ...(s?.soundMix ?? {}) } }
+      },
+    },
   ),
 )

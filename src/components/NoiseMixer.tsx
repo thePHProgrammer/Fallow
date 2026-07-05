@@ -6,6 +6,8 @@ const CHANNELS: { kind: NoiseKind; label: string }[] = [
   { kind: 'white', label: 'White' },
   { kind: 'pink', label: 'Pink' },
   { kind: 'brown', label: 'Brown' },
+  { kind: 'rain', label: 'Rain' },
+  { kind: 'waves', label: 'Waves' },
 ]
 
 export function NoiseMixer() {

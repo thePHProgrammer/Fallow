@@ -56,8 +56,10 @@ Retrofitting this later is expensive; doing it first is nearly free.
   (`startedAt` / `endsAt`); the render interval only refreshes the display.
   Phase-change chimes run on the Web Audio clock, which is not throttled.
 - **Noise mixer.** White noise from a random buffer, pink via Paul Kellet's
-  filter, brown via leaky integration — each looped with its own gain node and
-  a low default level.
+  filter, brown via leaky integration, rain as high-passed hiss plus random
+  droplet transients, and waves as brown noise on a slow swell envelope with
+  crest hiss — all procedural, each a seamlessly crossfaded loop with its own
+  gain node and a low default level.
 
 ### Phase 2 — Restorative breaks ✅
 Triggered on timer completion (the break phase shows an activity picker) plus
