@@ -99,6 +99,19 @@ Loss-framed mechanics (dying streaks, wilting plants) convert a focus tool
 into an anxiety source, so they are banned here the same way the doom-scroll
 break option is.
 
+### The bird & lofi radio — coziness
+A low-poly bird on a branch sits above the timer, generated from three.js
+primitives (no assets) and lazy-loaded so the timer paints first. Feeding
+follows the field's rules: completed blocks earn seeds (3 per Pomodoro,
+~1 per 10 Flowtime minutes, max 5), abandoned blocks earn none, and the bird
+has no hunger meter or sad state. Calm Mode / reduced motion render a single
+still frame.
+
+The lofi radio is the one deliberate exception to "works offline": an
+opt-in `<audio>` stream that never autoplays and is never cached. Stations
+come from the Radio Browser directory at play time (stream URLs rot) with
+hard-coded fallbacks; each failure moves to the next station exactly once.
+
 ## Data model
 
 ```
@@ -107,6 +120,7 @@ task:     { id, title, quadrant: I|II|III|IV, context, trigger, done, createdAt 
 habit:    { id, name, trigger, freezes, log: [dates], createdAt }   // max 3 active
 session:  { id, mode, start, end, taskId? }                          // light, optional
 journal:  { id, createdAt, feelings, thoughts }                      // local/encrypted
+bird:     { seeds, fed, lastFedAt }                                  // growth-only
 ```
 
 All of it persists via Zustand `persist` (localStorage now; IndexedDB if the
@@ -125,16 +139,21 @@ src/
     tasks.ts            Eisenhower tasks, 10-per-quadrant cap (persisted)
     habits.ts           max-3 habits, freezes, local-tz streaks (persisted)
     journal.ts          entries + autosaved draft (persisted, local-only)
+    bird.ts             seeds earned by focus, lifetime feedings (persisted)
   audio/
-    noise.ts            procedural white/pink/brown engine + chime
+    noise.ts            procedural noise engine + chime + bird chirp
+    radio.ts            opt-in lofi radio stream with station fallback
+  scene/
+    birdScene.ts        three.js bird: geometry, idle + feeding animation
   components/
     TimerPanel.tsx      hybrid timer UI + 90-minute nudge
+    BirdScene.tsx       lazy-loads the bird scene, feed button
     BreakPanel.tsx      restorative break activities (Phase 2)
     BoardPanel.tsx      Eisenhower board, dnd-kit drag between quadrants
     HabitsPanel.tsx     gentle habit cards, one-tap logging
     JournalPanel.tsx    two-prompt editor, plain-text export
     FieldPanel.tsx      growth-only field of completed blocks
-    NoiseMixer.tsx      per-colour gain sliders
+    NoiseMixer.tsx      lofi radio controls + per-colour gain sliders
     SettingsPanel.tsx   Calm Mode + durations + JSON export/import
 public/
   manifest.webmanifest  PWA install metadata

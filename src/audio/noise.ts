@@ -172,6 +172,29 @@ class NoiseEngine {
     }
   }
 
+  /** A tiny two-note bird chirp: quick rising sine sweeps. */
+  chirp(): void {
+    if (!this.ctx) this.ctx = new AudioContext()
+    void this.ctx.resume()
+    const t0 = this.ctx.currentTime
+    for (const [from, to, at] of [
+      [2600, 4200, 0],
+      [2900, 4600, 0.13],
+    ] as const) {
+      const osc = this.ctx.createOscillator()
+      osc.type = 'sine'
+      osc.frequency.setValueAtTime(from, t0 + at)
+      osc.frequency.exponentialRampToValueAtTime(to, t0 + at + 0.08)
+      const env = this.ctx.createGain()
+      env.gain.setValueAtTime(0, t0 + at)
+      env.gain.linearRampToValueAtTime(0.035, t0 + at + 0.01)
+      env.gain.exponentialRampToValueAtTime(0.0001, t0 + at + 0.1)
+      osc.connect(env).connect(this.ctx.destination)
+      osc.start(t0 + at)
+      osc.stop(t0 + at + 0.12)
+    }
+  }
+
   private ramp(gain: GainNode, target: number): void {
     if (!this.ctx) return
     gain.gain.cancelScheduledValues(this.ctx.currentTime)

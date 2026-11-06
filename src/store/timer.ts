@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { useSettings } from './settings'
+import { useBird, SEEDS_PER_POMODORO, flowtimeSeeds } from './bird'
 
 export type TimerMode = 'pomodoro' | 'flowtime'
 export type TimerPhase = 'idle' | 'focus' | 'break'
@@ -88,6 +89,10 @@ export const useTimer = create<TimerState>()(
             const earned = (now - s.startedAt) / FLOWTIME_BREAK_RATIO
             breakMs = Math.min(Math.max(earned, MIN_BREAK_MS), MAX_BREAK_MS)
           }
+          // A finished block earns seeds for the bird; abandoned ones don't.
+          useBird
+            .getState()
+            .earnSeeds(s.mode === 'pomodoro' ? SEEDS_PER_POMODORO : flowtimeSeeds(now - s.startedAt))
           return {
             phase: 'break',
             sessions: logSession(s, now, true),

@@ -9,6 +9,7 @@ const STORE_KEYS = [
   'fallow-tasks',
   'fallow-habits',
   'fallow-journal',
+  'fallow-bird',
 ]
 
 const DURATIONS: { key: keyof TimerConfig; label: string; hint: string }[] = [

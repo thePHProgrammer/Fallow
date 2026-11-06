@@ -3,6 +3,7 @@ import { useTimer } from '../store/timer'
 import { noiseEngine } from '../audio/noise'
 import { NoiseMixer } from './NoiseMixer'
 import { BreakPanel } from './BreakPanel'
+import { BirdScene } from './BirdScene'
 
 const LONG_FOCUS_NUDGE_MS = 90 * 60_000
 
@@ -67,6 +68,7 @@ export function TimerPanel() {
 
   return (
     <section aria-label="Focus timer">
+      <BirdScene />
       <div className="timer">
         <p className="timer-phase">{phaseLabel}</p>
         <p className="timer-clock" role="timer" aria-live="off">

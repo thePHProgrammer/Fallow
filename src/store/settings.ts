@@ -11,6 +11,8 @@ const DEFAULT_MIX: Record<NoiseKind, number> = {
   waves: 0,
 }
 
+const DEFAULT_RADIO_VOLUME = 0.35
+
 export interface TimerConfig {
   focusMinutes: number
   breakMinutes: number
@@ -23,9 +25,12 @@ interface SettingsState {
   timerConfig: TimerConfig
   // Per-channel gain, 0..1. Defaults are deliberately low.
   soundMix: Record<NoiseKind, number>
+  /** Lofi radio volume, 0..1. The radio itself never autoplays. */
+  radioVolume: number
   setCalmMode: (on: boolean) => void
   setTimerConfig: (patch: Partial<TimerConfig>) => void
   setNoiseLevel: (kind: NoiseKind, level: number) => void
+  setRadioVolume: (level: number) => void
 }
 
 export const useSettings = create<SettingsState>()(
@@ -39,20 +44,26 @@ export const useSettings = create<SettingsState>()(
         blocksPerLongBreak: 4,
       },
       soundMix: DEFAULT_MIX,
+      radioVolume: DEFAULT_RADIO_VOLUME,
       setCalmMode: (on) => set({ calmMode: on }),
       setTimerConfig: (patch) =>
         set((s) => ({ timerConfig: { ...s.timerConfig, ...patch } })),
       setNoiseLevel: (kind, level) =>
         set((s) => ({ soundMix: { ...s.soundMix, [kind]: level } })),
+      setRadioVolume: (level) => set({ radioVolume: level }),
     }),
     {
       name: 'fallow-settings',
-      version: 1,
+      version: 2,
       // v0 → v1: soundMix gained rain and waves; keep the user's levels and
-      // default the new channels to silent.
+      // default the new channels to silent. v1 → v2: radioVolume added.
       migrate: (persisted) => {
         const s = persisted as SettingsState
-        return { ...s, soundMix: { ...DEFAULT_MIX, ...(s?.soundMix ?? {}) } }
+        return {
+          ...s,
+          soundMix: { ...DEFAULT_MIX, ...(s?.soundMix ?? {}) },
+          radioVolume: s?.radioVolume ?? DEFAULT_RADIO_VOLUME,
+        }
       },
     },
   ),

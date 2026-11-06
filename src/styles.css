@@ -335,6 +335,66 @@ button {
 }
 
 /* --------------------------------------------------------------------------
+   The bird — a warm, sunlit nook above the timer
+-------------------------------------------------------------------------- */
+
+.bird {
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 78% 0%, #fde6c4 0%, transparent 60%),
+    linear-gradient(180deg, #f8ead6 0%, #f3e6d6 55%, #eee3d3 100%);
+}
+
+:root[data-calm='true'] .bird {
+  background: var(--color-accent-soft);
+}
+
+.bird-canvas {
+  display: block;
+  width: 100%;
+  height: clamp(11rem, 32vw, 14rem);
+  opacity: 0;
+  transition: opacity 600ms ease;
+  touch-action: manipulation;
+}
+
+.bird-canvas[data-ready='true'] {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bird-canvas {
+    transition: none;
+  }
+}
+
+:root[data-calm='true'] .bird-canvas {
+  transition: none;
+}
+
+.bird-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  padding: 0.75rem 1rem;
+  background: color-mix(in srgb, var(--color-surface) 70%, transparent);
+  border-top: 1px solid var(--color-border);
+}
+
+.bird-note {
+  color: var(--color-text-soft);
+  font-size: 0.875rem;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* --------------------------------------------------------------------------
    Noise mixer
 -------------------------------------------------------------------------- */
 
@@ -369,6 +429,30 @@ button {
 .mixer-row label {
   color: var(--color-text-soft);
   font-size: 0.9rem;
+}
+
+.radio {
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.radio .mixer-head {
+  margin-bottom: 0.25rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.radio-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.radio-status {
+  color: var(--color-text-soft);
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  overflow-wrap: anywhere;
 }
 
 input[type='range'] {
@@ -760,7 +844,31 @@ input[type='checkbox'] {
     min-height: 2.25rem;
   }
 
-  input[type='range'] {
+  .radio {
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.radio .mixer-head {
+  margin-bottom: 0.25rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.radio-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.radio-status {
+  color: var(--color-text-soft);
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  overflow-wrap: anywhere;
+}
+
+input[type='range'] {
     min-height: 2rem;
   }
 
