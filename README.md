@@ -14,11 +14,19 @@ Land left fallow recovers. So does attention.
 - **Procedural sound.** White, pink, and brown noise plus rain and ocean
   waves, all generated with the
   Web Audio API — no audio files, works offline.
-- **A bird to keep you company.** A low-poly 3D bird, built in code with
-  three.js (no model files), sits on a branch above the timer — breathing,
-  blinking, tilting its head. Each completed focus block earns seeds; feed
-  them and it hops over, pecks, and chirps. It never gets hungry or leaves.
-  Stays perfectly still in Calm Mode or with reduced motion.
+- **A living background.** The whole app sits on frosted panels over a
+  full-screen low-poly scene, built in code with three.js (no model files):
+  a small bird on a branch — breathing, blinking, tilting its head — over
+  soft hills and drifting clouds. It frames itself for the screen: beside
+  the content on wide monitors, in a clear window above it on phones.
+- **Feed the bird.** Each completed focus block earns seeds; feed them and
+  the bird hops over, pecks, and chirps. It never gets hungry or leaves.
+- **Waves take it to sea.** Turn on sound and raise the Waves slider: the
+  bird lifts off, the land drops away, and it glides over a rolling ocean
+  at sunset. Turn Waves down and it flies home.
+- **Ambient mode.** One button hides the app and leaves the scene and a
+  small clock, fullscreen and screen-awake — made for a second monitor.
+  Calm Mode and reduced motion hold the scene perfectly still.
 - **Lofi radio (opt-in).** Streams live lofi when you press play, picking a
   working station from the public Radio Browser directory with fallbacks.
   The one feature that needs a connection; it never autoplays.

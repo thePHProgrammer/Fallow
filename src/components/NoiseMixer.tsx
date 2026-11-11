@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSettings, type NoiseKind } from '../store/settings'
 import { noiseEngine } from '../audio/noise'
+import { useUi, WAVES_THRESHOLD } from '../store/ui'
 import { radio, type RadioStatus, type Station } from '../audio/radio'
 
 const CHANNELS: { kind: NoiseKind; label: string }[] = [
@@ -86,7 +87,9 @@ function LofiRadio() {
 export function NoiseMixer() {
   const soundMix = useSettings((s) => s.soundMix)
   const setNoiseLevel = useSettings((s) => s.setNoiseLevel)
-  const [playing, setPlaying] = useState(false)
+  const playing = useUi((u) => u.noiseOn)
+  const setPlaying = useUi((u) => u.setNoiseOn)
+  const overWater = playing && soundMix.waves > WAVES_THRESHOLD
 
   const toggle = () => {
     if (playing) {
@@ -126,6 +129,11 @@ export function NoiseMixer() {
           />
         </div>
       ))}
+      <p className="radio-status" aria-live="polite">
+        {overWater
+          ? 'The bird is out over the water.'
+          : 'Turn up Waves with sound on and the bird flies out to sea.'}
+      </p>
     </section>
   )
 }

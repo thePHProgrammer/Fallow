@@ -1,63 +1,16 @@
-import { useEffect, useState } from 'react'
 import { useTimer } from '../store/timer'
-import { noiseEngine } from '../audio/noise'
+import { useClock } from '../store/timerClock'
 import { NoiseMixer } from './NoiseMixer'
 import { BreakPanel } from './BreakPanel'
-import { BirdScene } from './BirdScene'
+import { BirdFeeder } from './BirdScene'
 
 const LONG_FOCUS_NUDGE_MS = 90 * 60_000
 
-function format(ms: number): string {
-  const total = Math.max(0, Math.round(ms / 1000))
-  const m = Math.floor(total / 60)
-  const s = total % 60
-  return `${m}:${String(s).padStart(2, '0')}`
-}
-
 export function TimerPanel() {
   const timer = useTimer()
-  const [now, setNow] = useState(() => Date.now())
-
-  // Re-render on a coarse tick; correctness comes from the timestamps, so it
-  // does not matter that background tabs throttle this interval.
-  useEffect(() => {
-    if (timer.phase === 'idle') return
-    setNow(Date.now())
-    const id = setInterval(() => setNow(Date.now()), 500)
-    return () => clearInterval(id)
-  }, [timer.phase])
-
-  // Phase transitions, derived from wall-clock time.
-  useEffect(() => {
-    if (timer.endsAt !== null && now >= timer.endsAt) {
-      noiseEngine.chime()
-      if (timer.phase === 'focus') timer.completeFocus()
-      else if (timer.phase === 'break') timer.endBreak()
-    }
-  }, [now, timer])
-
-  const remaining = timer.endsAt !== null ? timer.endsAt - now : null
-  const elapsed = timer.startedAt !== null ? now - timer.startedAt : 0
-
-  const clock =
-    timer.phase === 'idle'
-      ? format(0)
-      : remaining !== null
-        ? format(remaining)
-        : format(elapsed)
-
-  useEffect(() => {
-    document.title = timer.phase === 'idle' ? 'Fallow' : `${clock} · Fallow`
-  }, [clock, timer.phase])
-
-  const phaseLabel =
-    timer.phase === 'idle'
-      ? 'Ready'
-      : timer.phase === 'break'
-        ? 'Break'
-        : timer.mode === 'pomodoro'
-          ? 'Focus'
-          : 'Focus — counting up'
+  // Phase transitions and the tab title live in TimerDriver (App level), so
+  // the timer keeps working on every tab and in ambient mode.
+  const { elapsed, clock, phaseLabel } = useClock()
 
   const confirmAbandon = () => {
     // Indivisibility: stopping mid-block is deliberate, never casual.
@@ -68,7 +21,7 @@ export function TimerPanel() {
 
   return (
     <section aria-label="Focus timer">
-      <BirdScene />
+      <BirdFeeder />
       <div className="timer">
         <p className="timer-phase">{phaseLabel}</p>
         <p className="timer-clock" role="timer" aria-live="off">

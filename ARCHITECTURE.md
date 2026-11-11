@@ -99,13 +99,27 @@ Loss-framed mechanics (dying streaks, wilting plants) convert a focus tool
 into an anxiety source, so they are banned here the same way the doom-scroll
 break option is.
 
-### The bird & lofi radio — coziness
-A low-poly bird on a branch sits above the timer, generated from three.js
-primitives (no assets) and lazy-loaded so the timer paints first. Feeding
-follows the field's rules: completed blocks earn seeds (3 per Pomodoro,
-~1 per 10 Flowtime minutes, max 5), abandoned blocks earn none, and the bird
-has no hunger meter or sad state. Calm Mode / reduced motion render a single
-still frame.
+### The living background & lofi radio — coziness
+A fixed, full-viewport three.js scene sits behind the whole app; the page is
+a frosted sheet over it. Everything is generated from primitives (no assets)
+and lazy-loaded, with two cross-fading CSS skies underneath so there is
+always a background — before the 3D chunk arrives, or without WebGL.
+
+- **Framing.** The scene is told where the bird should appear (an anchor in
+  screen fractions plus a pixel height) and frames it with camera distance
+  and a view offset: in the free right margin on wide screens, inside the
+  `.scene-window` gap above the content on narrow ones, centre stage in
+  ambient mode.
+- **Feeding** follows the field's rules: completed blocks earn seeds (3 per
+  Pomodoro, ~1 per 10 Flowtime minutes, max 5), abandoned blocks earn none,
+  and the bird has no hunger meter or sad state.
+- **Ocean flight.** When the mixer is on and Waves is audible, a single
+  `fly` value blends 0→1: wings open, the land sinks away, a displaced
+  low-poly sea rises, and the bird glides. Reversing the blend lands it.
+- **Ambient mode** hides the shell (kept mounted), shows a corner clock,
+  requests fullscreen and a screen wake lock. Timer phase transitions live
+  in an always-mounted `TimerDriver`, so they fire on any tab.
+- Calm Mode / reduced motion render single still frames in either place.
 
 The lofi radio is the one deliberate exception to "works offline": an
 opt-in `<audio>` stream that never autoplays and is never cached. Stations
@@ -140,14 +154,18 @@ src/
     habits.ts           max-3 habits, freezes, local-tz streaks (persisted)
     journal.ts          entries + autosaved draft (persisted, local-only)
     bird.ts             seeds earned by focus, lifetime feedings (persisted)
+    ui.ts               session-only: mixer on/off, ambient mode
+    timerClock.ts       clock formatting + display hooks
   audio/
     noise.ts            procedural noise engine + chime + bird chirp
     radio.ts            opt-in lofi radio stream with station fallback
   scene/
-    birdScene.ts        three.js bird: geometry, idle + feeding animation
+    birdScene.ts        three.js background: bird, land, sea, flight blend
+    handle.ts           shared reference to the live scene
   components/
     TimerPanel.tsx      hybrid timer UI + 90-minute nudge
-    BirdScene.tsx       lazy-loads the bird scene, feed button
+    BirdScene.tsx       full-screen backdrop (lazy-loads the scene) + feeder
+    AmbientMode.tsx     ambient overlay, wake lock, always-on TimerDriver
     BreakPanel.tsx      restorative break activities (Phase 2)
     BoardPanel.tsx      Eisenhower board, dnd-kit drag between quadrants
     HabitsPanel.tsx     gentle habit cards, one-tap logging
