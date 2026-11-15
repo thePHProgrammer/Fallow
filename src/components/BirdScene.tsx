@@ -10,14 +10,14 @@ import type { Anchor, BirdSceneHandle, SceneMode } from '../scene/birdScene'
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v))
 
 /** The whole composition (mug … nest … lamp and books) is about this many
- *  robin-heights wide; used to fit it into the space available. */
+ *  bird-heights wide; used to fit it into the space available. */
 const SCENE_WIDTH_IN_BIRDS = 5.8
 
 function prefersReducedMotion(): boolean {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
-/** Where the robin should sit:
+/** Where the bird should sit:
  *  - fullscreen, or the banner on narrow screens: centre stage, with the
  *    whole composition in view;
  *  - behind the app on wide screens: in the free space to the right of the
@@ -30,7 +30,7 @@ function measureAnchor(stage: HTMLElement): Anchor {
   const left = behindApp ? shell.getBoundingClientRect().right : 0
   const free = w - left
   const size = clamp(Math.min(h * 0.34, free / SCENE_WIDTH_IN_BIRDS), behindApp ? 130 : 40, 320)
-  // The room has more on the robin's right (lamp, books) than its left, so
+  // The room has more on the bird's right (lamp, books) than its left, so
   // sit it a little left of centre.
   const x = (left + free / 2 - size * 0.5) / w
   return { x, y: 0.58, size }
@@ -75,9 +75,9 @@ export function BirdBackdrop() {
     let cancelled = false
     import('../scene/birdScene')
       .then(({ createBirdScene }) => {
-        if (cancelled || !canvasRef.current || !stageRef.current) return
+        if (cancelled || !canvasRef.current || !stageRef.current) return null
         const now = latest.current
-        const scene = createBirdScene(canvasRef.current, {
+        return createBirdScene(canvasRef.current, {
           animated: now.animated,
           mode: now.mode,
           anchor: measureAnchor(stageRef.current),
@@ -87,9 +87,16 @@ export function BirdBackdrop() {
             if (veilRef.current) veilRef.current.style.opacity = String(v)
           },
           onFlash: (v) => {
-            if (flashRef.current) flashRef.current.style.opacity = String(v * 0.55)
+            if (flashRef.current) flashRef.current.style.opacity = String(v * 0.45)
           },
         })
+      })
+      .then((scene) => {
+        if (!scene) return
+        if (cancelled) {
+          scene.dispose() // unmounted while the bird model was loading
+          return
+        }
         sceneRef.current = scene
         setScene(scene)
         setReady(true)

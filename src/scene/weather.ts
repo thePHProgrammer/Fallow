@@ -52,7 +52,7 @@ export function buildRain(o: RainOptions) {
  *  it; `update()` returns the flash brightness (0..1) for the sky. */
 export function buildLightning() {
   const group = new THREE.Group()
-  const material = new THREE.MeshBasicMaterial({ color: 0xf6f8ff, fog: false })
+  const material = new THREE.MeshBasicMaterial({ color: 0xf5efe6, fog: false })
   const geo = new THREE.CylinderGeometry(1, 1, 1, 5)
   const segments = Array.from({ length: 22 }, () => {
     const m = new THREE.Mesh(geo, material)

@@ -1,9 +1,9 @@
 import * as THREE from 'three'
-import { at, ball, box, cyl, flat, halo, label, outline, painted, rod, seeded, toon } from './toon'
+import { at, ball, box, clay, clayPainted, CREAM, cyl, flat, halo, label, painted, rod, seeded } from './clay'
 import { buildRain } from './weather'
 
 /**
- * The cozy room: a desk by a rainy window at dusk. The robin's nest sits at
+ * The cozy room: a desk by a rainy window at dusk. The bird's nest sits at
  * the origin; the desk top is y = 0.
  */
 
@@ -40,7 +40,7 @@ function plant(pot: number, leaves: number, rand: () => number): THREE.Group {
   g.add(at(cyl(pot, pot * 0.75, pot * 1.3, C.terracotta), 0, pot * 0.65, 0))
   for (let i = 0; i < leaves; i++) {
     const a = (i / leaves) * Math.PI * 2 + rand()
-    const leaf = ball(pot * 1.5, pot * 0.3, pot * 0.8, i % 2 ? C.leafLight : C.leaf, { ink: 0.015 })
+    const leaf = ball(pot * 1.5, pot * 0.3, pot * 0.8, i % 2 ? C.leafLight : C.leaf)
     at(leaf, Math.cos(a) * pot * 0.7, pot * 1.5 + rand() * pot, Math.sin(a) * pot * 0.5, 0, -a, 0.5)
     g.add(leaf)
   }
@@ -49,11 +49,11 @@ function plant(pot: number, leaves: number, rand: () => number): THREE.Group {
 
 function picture(w: number, h: number, tex: THREE.Texture): THREE.Group {
   const g = new THREE.Group()
-  g.add(new THREE.Mesh(new THREE.PlaneGeometry(w + 0.16, h + 0.3), flat(0xf2ead8)))
-  const art = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: tex }))
+  g.add(new THREE.Mesh(new THREE.PlaneGeometry(w + 0.16, h + 0.3), clay(0xf2ead8)))
+  const art = new THREE.Mesh(new THREE.PlaneGeometry(w, h), clayPainted(tex))
   art.position.set(0, 0.06, 0.01)
   g.add(art)
-  g.add(at(box(0.22, 0.1, 0.02, 0xd9c08a, { ink: false }), 0, h / 2 + 0.17, 0.02, 0, 0, 0.15))
+  g.add(at(box(0.22, 0.1, 0.02, 0xd9c08a), 0, h / 2 + 0.17, 0.02, 0, 0, 0.15))
   return g
 }
 
@@ -62,7 +62,7 @@ export function buildRoom() {
   const rand = seeded(7)
 
   // --- Walls and window ---------------------------------------------------
-  group.add(at(new THREE.Mesh(new THREE.PlaneGeometry(90, 40), toon(C.wall)), 0, 6, -3.2))
+  group.add(at(new THREE.Mesh(new THREE.PlaneGeometry(90, 40), clay(C.wall)), 0, 6, -3.2))
   group.add(at(box(0.4, 16, 0.25, C.woodDark), -1.25, 5, -3.1))
 
   const WX = 1.7
@@ -92,7 +92,7 @@ export function buildRoom() {
     }
   })
   group.add(
-    at(new THREE.Mesh(new THREE.PlaneGeometry(4.5, 3.9), new THREE.MeshBasicMaterial({ map: dusk })), WX, WY, -3.17),
+    at(new THREE.Mesh(new THREE.PlaneGeometry(4.5, 3.9), new THREE.MeshBasicMaterial({ map: dusk, color: 0xcfc4c0 })), WX, WY, -3.17),
   )
   for (const [w, h, x, y] of [
     [5.0, 0.3, 0, 2.05],
@@ -119,8 +119,8 @@ export function buildRoom() {
   group.add(rain.lines)
 
   // --- Desk -----------------------------------------------------------------
-  group.add(at(box(40, 0.36, 5.0, C.wood, { ink: 0.04 }), 0, -0.18, -0.75))
-  group.add(at(new THREE.Mesh(new THREE.PlaneGeometry(40, 12), toon(C.woodDeep)), 0, -6.3, 1.6))
+  group.add(at(box(40, 0.36, 5.0, C.wood), 0, -0.18, -0.75))
+  group.add(at(new THREE.Mesh(new THREE.PlaneGeometry(40, 12), clay(C.woodDeep)), 0, -6.3, 1.6))
   // A shelf of books under the desk.
   group.add(at(box(40, 0.2, 1.2, C.woodDark), 0, -2.0, 1.3))
   for (let x = -11; x < 11; ) {
@@ -134,22 +134,22 @@ export function buildRoom() {
   }
   const beats = new THREE.Mesh(
     new THREE.PlaneGeometry(1.3, 0.27),
-    new THREE.MeshBasicMaterial({ map: label('LOFI BEATS', '#efe2bd', '#4a2f1e') }),
+    clayPainted(label('LOFI BEATS', '#efe2bd', '#4a2f1e')),
   )
   group.add(at(beats, 2.9, -0.18, 1.77, 0, 0, -0.03))
 
   // --- Nest and blanket -------------------------------------------------------
-  const nest = outline(new THREE.Mesh(new THREE.TorusGeometry(0.78, 0.27, 12, 32), toon(C.straw)), 0.03)
+  const nest = new THREE.Mesh(new THREE.TorusGeometry(0.78, 0.27, 12, 32), clay(C.straw))
   group.add(at(nest, 0, 0.27, 0, Math.PI / 2, 0, 0))
-  group.add(at(cyl(0.8, 0.72, 0.2, C.strawDark, { ink: false }), 0, 0.12, 0))
+  group.add(at(cyl(0.8, 0.72, 0.2, C.strawDark), 0, 0.12, 0))
   // Woven bands.
   for (let i = 0; i < 16; i++) {
     const a = (i / 16) * Math.PI * 2
-    const band = ball(0.09, 0.5, 0.09, C.strawDark, { ink: false })
+    const band = ball(0.09, 0.5, 0.09, C.strawDark)
     group.add(at(band, Math.cos(a) * 1.03, 0.27, Math.sin(a) * 1.03, 0, 0, 0))
   }
   const arc = (r: number, tube: number, color: number, len: number, turn: number, y: number) => {
-    const m = outline(new THREE.Mesh(new THREE.TorusGeometry(r, tube, 10, 28, len), toon(color)), 0.03)
+    const m = new THREE.Mesh(new THREE.TorusGeometry(r, tube, 10, 28, len), clay(color))
     // Round off the two cut ends.
     for (const a of [0, len]) m.add(at(ball(tube * 2, tube * 2, tube * 2, color), r * Math.cos(a), r * Math.sin(a), 0))
     return at(m, 0, y, 0, -Math.PI / 2, 0, turn)
@@ -164,12 +164,12 @@ export function buildRoom() {
   const MX = -2.35
   group.add(at(cyl(0.7, 0.7, 0.05, C.strawDark), MX, 0.025, 0.25, 0, 0, 0))
   group.add(at(cyl(0.42, 0.38, 0.78, C.mug), MX, 0.44, 0.25))
-  group.add(at(cyl(0.36, 0.36, 0.02, C.tea, { ink: false }), MX, 0.835, 0.25))
-  const handle = outline(new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.055, 8, 16), toon(C.mug)), 0.02)
+  group.add(at(cyl(0.36, 0.36, 0.02, C.tea), MX, 0.835, 0.25))
+  const handle = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.055, 8, 16), clay(C.mug))
   group.add(at(handle, MX - 0.44, 0.45, 0.25))
-  group.add(at(box(0.18, 0.22, 0.02, C.cream, { ink: 0.012 }), MX + 0.12, 0.4, 0.66))
+  group.add(at(box(0.18, 0.22, 0.02, C.cream), MX + 0.12, 0.4, 0.66))
   const steam = Array.from({ length: 5 }, (_, i) => {
-    const puff = halo(0.3, 0xffffff, 0.3)
+    const puff = halo(0.3, CREAM, 0.3)
     puff.material = (puff.material as THREE.MeshBasicMaterial).clone()
     ;(puff.material as THREE.MeshBasicMaterial).blending = THREE.NormalBlending
     group.add(puff)
@@ -185,7 +185,7 @@ export function buildRoom() {
   group.add(rod(elbow, headAt, 0.055, C.brass))
   group.add(at(ball(0.2, 0.2, 0.2, C.brass), elbow.x, elbow.y, elbow.z))
   const aim = new THREE.Vector3(-0.72, -0.68, 0.16).normalize()
-  const shade = outline(new THREE.Mesh(new THREE.ConeGeometry(0.62, 0.8, 20), flat(0xb07f33)), 0.03)
+  const shade = new THREE.Mesh(new THREE.ConeGeometry(0.62, 0.8, 20), clay(0xb07f33))
   shade.position.copy(headAt).addScaledVector(aim, 0.3)
   shade.quaternion.setFromUnitVectors(new THREE.Vector3(0, -1, 0), aim)
   group.add(shade)
@@ -193,12 +193,9 @@ export function buildRoom() {
   const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.26, 14, 10), flat(C.bulb))
   bulb.position.copy(bulbAt)
   group.add(bulb)
-  const glow = halo(2.6, 0xffcf80, 0.5)
+  const glow = halo(2.4, 0xff9e44, 0.3)
   glow.position.copy(bulbAt).add(new THREE.Vector3(0, 0, 0.4))
   group.add(glow)
-  const lamp = new THREE.PointLight(0xffd29a, 13, 16, 1.8)
-  lamp.position.copy(bulbAt)
-  group.add(lamp)
 
   // --- Books and radio --------------------------------------------------------
   const BX = 3.25
@@ -214,7 +211,7 @@ export function buildRoom() {
     const hex = `#${new THREE.Color(color).multiplyScalar(0.45).getHexString()}`
     const spine = new THREE.Mesh(
       new THREE.PlaneGeometry(1.9, 0.24),
-      new THREE.MeshBasicMaterial({ map: label(title, paper, hex) }),
+      clayPainted(label(title, paper, hex)),
     )
     spine.position.set(-0.1, 0, 0.805)
     book.add(spine)
@@ -222,22 +219,24 @@ export function buildRoom() {
   }
   const RY = 1.11
   group.add(at(box(1.7, 0.66, 0.6, 0xa8683c), BX + 0.1, RY + 0.33, BZ))
-  group.add(at(cyl(0.2, 0.2, 0.02, C.woodDeep, { ink: false }, 20), BX - 0.42, RY + 0.33, BZ + 0.31, Math.PI / 2, 0, 0))
+  group.add(at(cyl(0.2, 0.2, 0.02, C.woodDeep, 20), BX - 0.42, RY + 0.33, BZ + 0.31, Math.PI / 2, 0, 0))
   for (let i = -1; i <= 1; i++) {
-    group.add(at(box(0.3, 0.025, 0.01, 0xa8683c, { ink: false }), BX - 0.42, RY + 0.33 + i * 0.08, BZ + 0.325))
+    group.add(at(box(0.3, 0.025, 0.01, 0xa8683c), BX - 0.42, RY + 0.33 + i * 0.08, BZ + 0.325))
   }
   const dial = new THREE.Mesh(
     new THREE.PlaneGeometry(0.86, 0.26),
-    new THREE.MeshBasicMaterial({ map: label('LOFI RADIO', '#f4dc98', '#5a3a22', 384, 112) }),
+    clayPainted(label('LOFI RADIO', '#f4dc98', '#5a3a22', 384, 112)),
   )
   group.add(at(dial, BX + 0.38, RY + 0.42, BZ + 0.305))
+  const dialMat = dial.material as THREE.MeshStandardMaterial
+  dialMat.emissive.set(0xffd9a0)
+  dialMat.emissiveMap = dialMat.map
+  dialMat.emissiveIntensity = 0
   const dialGlow = halo(0.9, 0xffd98a, 0)
   group.add(at(dialGlow, BX + 0.38, RY + 0.42, BZ + 0.36))
-  group.add(at(cyl(0.05, 0.05, 0.05, C.woodDeep, { ink: false }, 10), BX + 0.78, RY + 0.16, BZ + 0.31, Math.PI / 2, 0, 0))
+  group.add(at(cyl(0.05, 0.05, 0.05, C.woodDeep, 10), BX + 0.78, RY + 0.16, BZ + 0.31, Math.PI / 2, 0, 0))
   group.add(
-    rod(new THREE.Vector3(BX + 0.8, RY + 0.66, BZ), new THREE.Vector3(BX + 1.55, RY + 1.3, BZ), 0.018, 0x8a8478, {
-      ink: false,
-    }),
+    rod(new THREE.Vector3(BX + 0.8, RY + 0.66, BZ), new THREE.Vector3(BX + 1.55, RY + 1.3, BZ), 0.018, 0x8a8478),
   )
 
   // --- Succulent --------------------------------------------------------------
@@ -246,11 +245,11 @@ export function buildRoom() {
   for (let i = 0; i < 8; i++) {
     const a = (i / 8) * Math.PI * 2
     const tilt = i % 2 ? 0.75 : 0.4
-    const spike = outline(new THREE.Mesh(new THREE.ConeGeometry(0.085, 0.32, 6), toon(C.succulent)), 0.012)
+    const spike = new THREE.Mesh(new THREE.ConeGeometry(0.085, 0.32, 6), clay(C.succulent))
     at(spike, SX + Math.cos(a) * 0.13, 0.44, 1.05 + Math.sin(a) * 0.13, Math.sin(a) * tilt, 0, -Math.cos(a) * tilt)
     group.add(spike)
   }
-  group.add(at(outline(new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.3, 6), toon(C.succulent)), 0.012), SX, 0.5, 1.05))
+  group.add(at(new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.3, 6), clay(C.succulent)), SX, 0.5, 1.05))
 
   // --- Fairy lights -----------------------------------------------------------
   const wire: THREE.Vector3[] = []
@@ -262,7 +261,7 @@ export function buildRoom() {
     const b = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 6), flat(C.bulb))
     b.position.copy(p)
     group.add(b)
-    const h = halo(0.3, 0xffd98a, 0.55)
+    const h = halo(0.22, 0xffb866, 0.22)
     h.position.z = 0.05
     b.add(h)
     lights.push({ bulb: b, phase: rand() * 6 })
@@ -276,7 +275,7 @@ export function buildRoom() {
 
   // --- Bookshelf, vine, pictures ---------------------------------------------
   const shelfX = -6.4
-  group.add(at(box(5.0, 14, 0.2, C.woodDeep, { ink: false }), shelfX, 3, -3.05))
+  group.add(at(box(5.0, 14, 0.2, C.woodDeep), shelfX, 3, -3.05))
   group.add(at(box(0.25, 14, 1.0, C.woodDark), shelfX + 2.5, 3, -2.7))
   for (const y of [0.75, 2.45, 4.15, 5.85]) {
     group.add(at(box(5.0, 0.16, 1.0, C.woodDark), shelfX, y, -2.7))
@@ -303,7 +302,7 @@ export function buildRoom() {
     const y = 7 - i * 0.45
     const x = -2.75 + Math.sin(i * 0.9) * 0.22
     vine.push(new THREE.Vector3(x, y, -2.9))
-    const leaf = ball(0.5, 0.08, 0.3, i % 2 ? C.leafLight : C.leaf, { ink: 0.018 })
+    const leaf = ball(0.5, 0.08, 0.3, i % 2 ? C.leafLight : C.leaf)
     group.add(at(leaf, x + (i % 2 ? 0.22 : -0.22), y - 0.1, -2.85, 0.2, 0, i % 2 ? -0.9 : 0.9))
   }
   group.add(
@@ -324,7 +323,7 @@ export function buildRoom() {
     ctx.lineTo(w * 0.72, h * 0.35)
     ctx.lineTo(w, h * 0.75)
     ctx.fill()
-    ctx.fillStyle = '#ffffff'
+    ctx.fillStyle = '#f5ebe0'
     ctx.beginPath()
     ctx.moveTo(w * 0.35, h * 0.25)
     ctx.lineTo(w * 0.27, h * 0.38)
@@ -353,29 +352,39 @@ export function buildRoom() {
   group.add(at(plant(0.3, 7, rand), 5.5, 4.58, -2.8))
 
   // -------------------------------------------------------------------------
-  function update(t: number, state: RoomState) {
+  /** Returns the lamp's flicker (≈1) for the scene's warm light. */
+  function update(t: number, state: RoomState): number {
     rain.update(t, state.rainy ? 1 : 0.4)
 
     for (const s of steam) {
       const p = (t * 0.22 + s.offset) % 1
       s.puff.position.set(MX + Math.sin(p * 6 + s.offset * 9) * 0.12, 0.95 + p * 1.5, 0.25)
       s.puff.scale.setScalar(0.7 + p * 1.2)
-      ;(s.puff.material as THREE.MeshBasicMaterial).opacity = 0.5 * Math.sin(p * Math.PI)
+      ;(s.puff.material as THREE.MeshBasicMaterial).opacity = 0.2 * Math.sin(p * Math.PI)
     }
 
     // Lamp: a barely-there flicker. Fairy lights: slow twinkle.
     const flicker = 1 + Math.sin(t * 7.3) * 0.015 + Math.sin(t * 2.1) * 0.02
-    lamp.intensity = 13 * flicker
-    ;(glow.material as THREE.MeshBasicMaterial).opacity = 0.5 * flicker
+    ;(glow.material as THREE.MeshBasicMaterial).opacity = 0.3 * flicker
     for (const l of lights) {
       const s = 0.8 + 0.35 * Math.sin(t * 1.3 + l.phase)
       l.bulb.scale.setScalar(s)
     }
 
     const on = state.radioOn ? 1 : 0
-    ;(dial.material as THREE.MeshBasicMaterial).color.setScalar(0.72 + 0.28 * on)
+    dialMat.emissiveIntensity = on * 0.85
     ;(dialGlow.material as THREE.MeshBasicMaterial).opacity = on * (0.3 + 0.06 * Math.sin(t * 2))
+    return flicker
   }
 
-  return { group, update }
+  // Clay casts and catches the lamp's soft shadows; glows and glass don't.
+  group.traverse((o) => {
+    if (o instanceof THREE.Mesh && o.material instanceof THREE.MeshStandardMaterial) {
+      o.castShadow = true
+      o.receiveShadow = true
+    }
+  })
+
+  /** Where the lamp's bulb is, so the scene's warm light can sit in it. */
+  return { group, update, bulbAt }
 }

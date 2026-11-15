@@ -14,17 +14,18 @@ Land left fallow recovers. So does attention.
 - **Procedural sound.** White, pink, and brown noise plus rain and ocean
   waves, all generated with the
   Web Audio API — no audio files, works offline.
-- **A living, illustrated scene.** Drawn live with three.js in a
-  storybook style (cel shading and ink outlines, no image or model files):
-  a robin tucked in a nest on a desk by a rainy window — lamp glowing, tea
-  steaming, fairy lights twinkling, a little radio that lights up when the
-  lofi radio plays.
+- **A living lo-fi diorama.** Drawn live with three.js: matte clay shapes
+  in deep twilight fog, one warm amber lamp casting soft shadows, 150
+  drifting fireflies, and a gentle bloom on everything that glows. A bird
+  sits in a nest on a desk by a rainy window — tea steaming, fairy lights
+  twinkling, a little radio that lights up when the lofi radio plays.
 - **The sound mixer changes the weather.** Turn on sound and raise Waves:
-  the robin flies out over a blue sea, past lighthouses and fishing boats.
-  Add Rain and it becomes a storm — dark skies, big waves, rain, lightning.
+  the bird flies out over a sunset sea of rolling waves with cream foam,
+  past lighthouses and fishing boats that ride the swell. Add Rain and it
+  becomes a storm — black skies, big waves, rain, lightning.
   Rain alone keeps it home, with heavier rain on the window.
 - **Feed the bird.** Each completed focus block earns seeds; feed them and
-  the robin pecks them up (or catches them mid-air), hearts float up, and
+  the bird pecks them up (or catches them mid-air), hearts float up, and
   it chirps. It never gets hungry or leaves.
 - **Landscape everywhere.** On wide screens the scene fills the window with
   the app in a column on the left; on phones it is a landscape banner above
@@ -53,3 +54,7 @@ Deploys as a static site (e.g. Vercel) with zero configuration.
 
 See [ARCHITECTURE.md](./ARCHITECTURE.md) for the staged plan and the
 reasoning behind what was cut.
+
+## Credits
+
+Bird model: "Bird" by Kelli Ray (Google Poly), CC-BY.

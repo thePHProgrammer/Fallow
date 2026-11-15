@@ -113,6 +113,8 @@ export function SettingsPanel() {
           />
         </div>
       </div>
+
+      <p className="section-intro">Bird model: &ldquo;Bird&rdquo; by Kelli Ray, CC-BY.</p>
     </section>
   )
 }

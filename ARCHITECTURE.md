@@ -100,21 +100,34 @@ into an anxiety source, so they are banned here the same way the doom-scroll
 break option is.
 
 ### The living scene & lofi radio — coziness
-A three.js scene drawn like an illustration: `MeshToonMaterial` with three
-light bands, and ink outlines made from inverted hulls (`scene/toon.ts`).
-Everything is generated from primitives and small canvas-drawn textures (no
-asset files) and lazy-loaded so the app paints first.
+A three.js diorama at dusk. Materials are matte clay
+(`MeshStandardMaterial`, roughness 0.92, metalness 0; `scene/clay.ts`) with
+no pure white anywhere. Light is a dim indigo `HemisphereLight` plus one
+amber `PointLight` (`#ff9e44`, distance 15, decay 2) that casts soft shadows:
+it sits in the desk lamp indoors and travels with the bird at sea.
+`FogExp2` (`#1a1625`) wraps everything; 150 `Points` fireflies drift upward;
+an `UnrealBloomPass` (0.35 / 0.6 / 0.85) makes only the light sources glow.
+The bird is a small glTF model (`assets/bird.glb`, "Bird" by Kelli Ray,
+CC-BY) rigged in code: wings hung on shoulder pivots, body in a pose group.
+Scenery is generated from primitives and canvas-drawn textures, and the
+whole scene chunk is lazy-loaded so the app paints first.
 
+- **Water.** One 80×80 plane displaced every frame by four summed Gerstner
+  waves. Vertices are coloured by elevation (navy troughs, ocean-blue
+  shoulders, cream foam on crests and around anything in the water), the
+  material is flat-shaded and slightly glossy (roughness 0.35, metalness
+  0.1) so facets catch the sunset, and boats take their height and tilt
+  from the same wave formula at their own position.
 - **Places.** `room` (nest on a desk by a rainy window), `sea`, and `storm`.
   The sound mixer picks: Waves → sea, Waves + Rain → storm, otherwise room
   (Rain alone just makes the window rain heavier). Room ↔ sea goes through
-  a short veil while the robin takes off or lands; sea ↔ storm is one
+  a short veil while the bird takes off or lands; sea ↔ storm is one
   `storm` value blending sky, water, wave height, rain and lightning.
 - **Layout.** One `.backdrop` element, three CSS states: fixed behind the
   app on wide screens (the app is a left column), a 16:9 banner on narrow
   screens, and full-screen in Fullscreen mode (rotated 90° in CSS on an
   upright phone that cannot lock to landscape). The scene is told where the
-  robin should appear (an anchor in screen fractions plus a pixel height)
+  bird should appear (an anchor in screen fractions plus a pixel height)
   and frames it with camera distance and a view offset.
 - **Feeding** follows the field's rules: completed blocks earn seeds (3 per
   Pomodoro, ~1 per 10 Flowtime minutes, max 5), abandoned blocks earn none,
@@ -164,11 +177,11 @@ src/
     noise.ts            procedural noise engine + chime + bird chirp
     radio.ts            opt-in lofi radio stream with station fallback
   scene/
-    birdScene.ts        orchestrator: camera, places, feeding, render loop
-    toon.ts             cel shading, ink outlines, shape + texture helpers
-    bird.ts             the robin (feathered wings) and floating hearts
+    birdScene.ts        orchestrator: lights, fog, bloom, places, render loop
+    clay.ts             matte clay materials, shape + texture helpers
+    bird.ts             loads and rigs the bird model; floating hearts
     room.ts             the cozy room
-    sea.ts              sea, sky, lighthouses, boats, calm ↔ storm blend
+    sea.ts              Gerstner water, sky, lighthouses, boats, storm blend
     weather.ts          rain streaks and lightning
     handle.ts           shared reference to the live scene
   components/
