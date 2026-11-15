@@ -131,7 +131,9 @@ export function NoiseMixer() {
       ))}
       <p className="radio-status" aria-live="polite">
         {overWater
-          ? 'The bird is out over the water.'
+          ? soundMix.rain > WAVES_THRESHOLD
+            ? 'The bird is out in the storm.'
+            : 'The bird is out over the water. Add Rain for a storm.'
           : 'Turn up Waves with sound on and the bird flies out to sea.'}
       </p>
     </section>

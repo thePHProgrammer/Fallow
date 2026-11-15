@@ -14,19 +14,23 @@ Land left fallow recovers. So does attention.
 - **Procedural sound.** White, pink, and brown noise plus rain and ocean
   waves, all generated with the
   Web Audio API — no audio files, works offline.
-- **A living background.** The whole app sits on frosted panels over a
-  full-screen low-poly scene, built in code with three.js (no model files):
-  a small bird on a branch — breathing, blinking, tilting its head — over
-  soft hills and drifting clouds. It frames itself for the screen: beside
-  the content on wide monitors, in a clear window above it on phones.
+- **A living, illustrated scene.** Drawn live with three.js in a
+  storybook style (cel shading and ink outlines, no image or model files):
+  a robin tucked in a nest on a desk by a rainy window — lamp glowing, tea
+  steaming, fairy lights twinkling, a little radio that lights up when the
+  lofi radio plays.
+- **The sound mixer changes the weather.** Turn on sound and raise Waves:
+  the robin flies out over a blue sea, past lighthouses and fishing boats.
+  Add Rain and it becomes a storm — dark skies, big waves, rain, lightning.
+  Rain alone keeps it home, with heavier rain on the window.
 - **Feed the bird.** Each completed focus block earns seeds; feed them and
-  the bird hops over, pecks, and chirps. It never gets hungry or leaves.
-- **Waves take it to sea.** Turn on sound and raise the Waves slider: the
-  bird lifts off, the land drops away, and it glides over a rolling ocean
-  at sunset. Turn Waves down and it flies home.
-- **Ambient mode.** One button hides the app and leaves the scene and a
-  small clock, fullscreen and screen-awake — made for a second monitor.
-  Calm Mode and reduced motion hold the scene perfectly still.
+  the robin pecks them up (or catches them mid-air), hearts float up, and
+  it chirps. It never gets hungry or leaves.
+- **Landscape everywhere.** On wide screens the scene fills the window with
+  the app in a column on the left; on phones it is a landscape banner above
+  the app. **Fullscreen** hides the app and leaves the scene and a small
+  clock, screen-awake — made for a second monitor; on a phone it turns the
+  picture to landscape. Calm Mode and reduced motion hold it still.
 - **Lofi radio (opt-in).** Streams live lofi when you press play, picking a
   working station from the public Radio Browser directory with fallbacks.
   The one feature that needs a connection; it never autoplays.

@@ -57,9 +57,6 @@ export default function App() {
           ))}
         </nav>
 
-        {/* A clear window onto the scene on screens too narrow to show the
-            bird beside the content. */}
-        <div className="scene-window" />
 
         <main>
           {tab === 'focus' && <TimerPanel />}

@@ -99,27 +99,31 @@ Loss-framed mechanics (dying streaks, wilting plants) convert a focus tool
 into an anxiety source, so they are banned here the same way the doom-scroll
 break option is.
 
-### The living background & lofi radio — coziness
-A fixed, full-viewport three.js scene sits behind the whole app; the page is
-a frosted sheet over it. Everything is generated from primitives (no assets)
-and lazy-loaded, with two cross-fading CSS skies underneath so there is
-always a background — before the 3D chunk arrives, or without WebGL.
+### The living scene & lofi radio — coziness
+A three.js scene drawn like an illustration: `MeshToonMaterial` with three
+light bands, and ink outlines made from inverted hulls (`scene/toon.ts`).
+Everything is generated from primitives and small canvas-drawn textures (no
+asset files) and lazy-loaded so the app paints first.
 
-- **Framing.** The scene is told where the bird should appear (an anchor in
-  screen fractions plus a pixel height) and frames it with camera distance
-  and a view offset: in the free right margin on wide screens, inside the
-  `.scene-window` gap above the content on narrow ones, centre stage in
-  ambient mode.
+- **Places.** `room` (nest on a desk by a rainy window), `sea`, and `storm`.
+  The sound mixer picks: Waves → sea, Waves + Rain → storm, otherwise room
+  (Rain alone just makes the window rain heavier). Room ↔ sea goes through
+  a short veil while the robin takes off or lands; sea ↔ storm is one
+  `storm` value blending sky, water, wave height, rain and lightning.
+- **Layout.** One `.backdrop` element, three CSS states: fixed behind the
+  app on wide screens (the app is a left column), a 16:9 banner on narrow
+  screens, and full-screen in Fullscreen mode (rotated 90° in CSS on an
+  upright phone that cannot lock to landscape). The scene is told where the
+  robin should appear (an anchor in screen fractions plus a pixel height)
+  and frames it with camera distance and a view offset.
 - **Feeding** follows the field's rules: completed blocks earn seeds (3 per
   Pomodoro, ~1 per 10 Flowtime minutes, max 5), abandoned blocks earn none,
   and the bird has no hunger meter or sad state.
-- **Ocean flight.** When the mixer is on and Waves is audible, a single
-  `fly` value blends 0→1: wings open, the land sinks away, a displaced
-  low-poly sea rises, and the bird glides. Reversing the blend lands it.
-- **Ambient mode** hides the shell (kept mounted), shows a corner clock,
-  requests fullscreen and a screen wake lock. Timer phase transitions live
-  in an always-mounted `TimerDriver`, so they fire on any tab.
-- Calm Mode / reduced motion render single still frames in either place.
+- **Fullscreen mode** hides the shell (kept mounted), shows a corner clock,
+  requests fullscreen, landscape and a screen wake lock. Timer phase
+  transitions live in an always-mounted `TimerDriver`, so they fire on any
+  tab.
+- Calm Mode / reduced motion render single still frames in any place.
 
 The lofi radio is the one deliberate exception to "works offline": an
 opt-in `<audio>` stream that never autoplays and is never cached. Stations
@@ -154,18 +158,23 @@ src/
     habits.ts           max-3 habits, freezes, local-tz streaks (persisted)
     journal.ts          entries + autosaved draft (persisted, local-only)
     bird.ts             seeds earned by focus, lifetime feedings (persisted)
-    ui.ts               session-only: mixer on/off, ambient mode
+    ui.ts               session-only: mixer on/off, fullscreen mode
     timerClock.ts       clock formatting + display hooks
   audio/
     noise.ts            procedural noise engine + chime + bird chirp
     radio.ts            opt-in lofi radio stream with station fallback
   scene/
-    birdScene.ts        three.js background: bird, land, sea, flight blend
+    birdScene.ts        orchestrator: camera, places, feeding, render loop
+    toon.ts             cel shading, ink outlines, shape + texture helpers
+    bird.ts             the robin (feathered wings) and floating hearts
+    room.ts             the cozy room
+    sea.ts              sea, sky, lighthouses, boats, calm ↔ storm blend
+    weather.ts          rain streaks and lightning
     handle.ts           shared reference to the live scene
   components/
     TimerPanel.tsx      hybrid timer UI + 90-minute nudge
-    BirdScene.tsx       full-screen backdrop (lazy-loads the scene) + feeder
-    AmbientMode.tsx     ambient overlay, wake lock, always-on TimerDriver
+    BirdScene.tsx       the scene's stage (lazy-loads it) + feed button
+    AmbientMode.tsx     fullscreen overlay, wake lock, always-on TimerDriver
     BreakPanel.tsx      restorative break activities (Phase 2)
     BoardPanel.tsx      Eisenhower board, dnd-kit drag between quadrants
     HabitsPanel.tsx     gentle habit cards, one-tap logging

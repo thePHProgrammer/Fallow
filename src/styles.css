@@ -21,7 +21,7 @@
   --font-ui: system-ui, -apple-system, 'Segoe UI', sans-serif;
 
   /* Frosted panels that sit over the background scene. */
-  --glass: rgba(250, 247, 242, 0.8);
+  --glass: rgba(250, 247, 242, 0.86);
   --glass-border: rgba(228, 222, 212, 0.9);
   --glass-blur: blur(16px) saturate(1.1);
 
@@ -91,8 +91,8 @@ button {
 -------------------------------------------------------------------------- */
 
 .shell {
-  /* Above the fixed backdrop. Gaps between panels let taps through to the
-     scene (tap the bird to say hello). */
+  /* Above the scene. Gaps between panels let taps through to it (tap the
+     bird to say hello). */
   position: relative;
   z-index: 1;
   pointer-events: none;
@@ -107,8 +107,23 @@ button {
   pointer-events: auto;
 }
 
-.shell > .scene-window {
-  pointer-events: none;
+/* Wide screens: the app is a column on the left, leaving the right of the
+   screen clear for the scene. */
+@media (min-width: 64rem) {
+  .shell {
+    width: min(42rem, 54vw);
+    max-width: none;
+    margin: 0 0 0 clamp(1rem, 3vw, 3rem);
+  }
+
+  .shell-header {
+    padding: 0.5rem 0.5rem 0.5rem 1rem;
+    border-radius: var(--radius);
+    background: var(--glass);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+  }
 }
 
 /* The page itself: one frosted sheet over the scene, so every tab stays
@@ -376,45 +391,52 @@ main {
 }
 
 /* --------------------------------------------------------------------------
-   The living background — a fixed, full-screen scene behind the whole app.
-   Two CSS skies cross-fade (branch ↔ ocean) under a transparent 3D canvas,
-   so there is always a sky, even before three.js loads or without WebGL.
+   The living scene (an illustrated 3D picture; see src/scene).
+   - Wide screens: fixed behind the app, which sits in a column on the left.
+   - Narrow screens: a landscape banner across the top; the app follows on a
+     plain background.
+   - Fullscreen mode: fills the screen, turned to landscape if need be.
 -------------------------------------------------------------------------- */
 
 .backdrop {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 62svh;
+  overflow: hidden;
+  background: #c9a377;
+}
+
+@media (min-width: 64rem) {
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    aspect-ratio: auto;
+    max-height: none;
+  }
+}
+
+.backdrop[data-full='true'] {
   position: fixed;
   inset: 0;
-  z-index: 0;
-  overflow: hidden;
-  background: var(--color-bg);
+  z-index: 1;
+  width: auto;
+  aspect-ratio: auto;
+  max-height: none;
 }
 
-.backdrop-sky {
-  position: absolute;
-  inset: 0;
-  transition: opacity 2400ms ease;
-}
-
-.backdrop-sky-perch {
-  background:
-    radial-gradient(90% 70% at 82% 8%, #fde3bd 0%, transparent 62%),
-    linear-gradient(180deg, #f9ecd9 0%, #f5e8d7 50%, #efe4d4 100%);
-}
-
-.backdrop-sky-ocean {
-  opacity: 0;
-  background: linear-gradient(180deg, #f6c7a2 0%, #fad9b8 34%, #fdeacf 62%, #e3ede2 100%);
-}
-
-.backdrop[data-scene='ocean'] .backdrop-sky-ocean {
-  opacity: 1;
-}
-
-.backdrop-canvas {
+.backdrop-canvas,
+.backdrop-veil,
+.backdrop-flash,
+.backdrop-paper {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
+}
+
+.backdrop-canvas {
   opacity: 0;
   transition: opacity 900ms ease;
   touch-action: manipulation;
@@ -424,35 +446,48 @@ main {
   opacity: 1;
 }
 
+.backdrop-veil,
+.backdrop-flash,
+.backdrop-paper {
+  pointer-events: none;
+}
+
+/* The soft veil the picture fades through when the bird changes place. */
+.backdrop-veil {
+  opacity: 0;
+  background: #fbf3e4;
+}
+
+.backdrop-flash {
+  opacity: 0;
+  background: #eef3ff;
+  mix-blend-mode: screen;
+}
+
+/* Paper grain and a soft vignette, so it reads as a drawing. */
+.backdrop-paper {
+  background:
+    radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(58, 42, 32, 0.28) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.23 0 0 0 0 0.16 0 0 0 0 0.12 0 0 0 0.1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .backdrop-sky,
   .backdrop-canvas {
     transition: none;
   }
 }
 
-:root[data-calm='true'] .backdrop-sky,
+/* Calm Mode: the picture stays, but washed out and perfectly still. */
 :root[data-calm='true'] .backdrop-canvas {
   transition: none;
 }
 
-/* Calm Mode: the scene stays, but washed out and perfectly still. */
-:root[data-calm='true'] .backdrop-sky,
 :root[data-calm='true'] .backdrop-canvas[data-ready='true'] {
-  opacity: 0.45;
+  opacity: 0.4;
 }
 
-/* A clear window onto the scene, for screens too narrow to show the bird
-   beside the content column. Hidden once the side margin is wide enough. */
-.scene-window {
-  height: clamp(9rem, 30svh, 16rem);
-  margin-bottom: 1rem;
-}
-
-@media (min-width: 82rem) {
-  .scene-window {
-    display: none;
-  }
+:root[data-calm='true'] .backdrop {
+  background: var(--color-bg);
 }
 
 .feeder {
@@ -1013,5 +1048,43 @@ input[type='range'] {
   input[type='checkbox'] {
     width: 1.35rem;
     height: 1.35rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Layout overrides (kept last so they win)
+-------------------------------------------------------------------------- */
+
+/* Narrow screens: the scene is a banner above, so panels are plain. */
+@media (max-width: 63.99rem) {
+  :root {
+    --glass: var(--color-bg);
+    --glass-border: transparent;
+    --glass-blur: none;
+  }
+
+  .shell {
+    padding-top: 1rem;
+  }
+
+  main {
+    padding: 0.5rem 0 0;
+    border: none;
+  }
+}
+
+/* A phone held upright that could not be turned: lay the scene on its side
+   so it still fills the screen as a landscape picture. */
+@media (orientation: portrait) and (max-width: 48rem) {
+  .backdrop[data-full='true'],
+  .ambient {
+    inset: auto;
+    top: 0;
+    left: 0;
+    width: 100vh;
+    width: 100dvh;
+    height: 100vw;
+    transform: rotate(90deg) translateY(-100%);
+    transform-origin: top left;
   }
 }

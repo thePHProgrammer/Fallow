@@ -30,18 +30,27 @@ export function AmbientButton() {
   const setAmbient = useUi((u) => u.setAmbient)
   const enter = () => {
     setAmbient(true)
-    // Fullscreen is a nicety (great on a second monitor); fine if refused.
-    document.documentElement.requestFullscreen?.().catch(() => {})
+    // Real fullscreen is a nicety (great on a second monitor); if the
+    // browser refuses, the scene still fills the window. On phones, turn to
+    // landscape where allowed — otherwise CSS rotates the scene instead.
+    const lock = () => {
+      const o = screen.orientation as ScreenOrientation & {
+        lock?: (orientation: string) => Promise<void>
+      }
+      o?.lock?.('landscape').catch(() => {})
+    }
+    const full = document.documentElement.requestFullscreen?.()
+    if (full) full.then(lock).catch(() => {})
   }
   return (
-    <button className="btn btn-quiet ambient-enter" onClick={enter}>
-      Ambient
+    <button className="btn ambient-enter" onClick={enter}>
+      Fullscreen
     </button>
   )
 }
 
-/** Ambient mode: just the scene, a small clock, and a way back. Meant for
- *  leaving open on a second monitor. */
+/** Fullscreen: just the scene, a small clock, and a way back. Meant for
+ *  leaving open on a second monitor (or a phone on its side). */
 export function AmbientOverlay() {
   const setAmbient = useUi((u) => u.setAmbient)
   const { clock, phaseLabel, phase } = useClock()
